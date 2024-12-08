@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commande en ligne</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            width: 400px;
+            margin: 50px auto;
+            padding: 20px 40px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            margin-bottom: 8px;
+            display: block;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #5c6bc0;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #3f4b8f;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Passer une commande</h1>
+        <form id="commandeForm">
+            <label for="nom">Nom:</label>
+            <input type="text" id="nom" name="nom" required>
+
+            <label for="adresse">Adresse:</label>
+            <input type="text" id="adresse" name="adresse" required>
+
+            <button type="submit">Envoyer la commande</button>
+        </form>
+
+        <div id="response"></div>
+    </div>
+
+    <script>
+        document.getElementById('commandeForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Empêche l'envoi traditionnel du formulaire
+
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            try {
+                const response = await fetch('/commande', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+                
+                const result = await response.json();
+                document.getElementById('response').textContent = result.message || 'Erreur inconnue';
+            } catch (error) {
+                document.getElementById('response').textContent = 'Erreur de connexion au serveur.';
+            }
+        });
+    </script>
+</body>
+</html>
